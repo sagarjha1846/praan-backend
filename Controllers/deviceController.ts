@@ -1,4 +1,5 @@
 import { deviceDetails } from "../models/Device"
+import csv from "csvtojson"
 
 const getDeviceDetails = async (req: any, res: any) => {
 
@@ -34,16 +35,23 @@ const getDeviceDetails = async (req: any, res: any) => {
 
 
 const uploadCSVData = async (req: any, res: any) => {
-  const data = req.body
-  const dataInserted = await deviceDetails.insertMany(req.body)
+  const data: any[] = []
+  console.log(req.file.path)
+  csv().fromFile(req.file.path).then(result => {
+    console.log(result.length)
+    data.push(...result)
+    deviceDetails.insertMany(result).then(function () {
+      res.status(200).send({
+        message: "Successfully Uploaded!"
+      });
+    }).catch(function (error) {
+      res.status(500).send({
+        message: "failure",
+        error
+      });
+    });
+  })
 
-  if (dataInserted) {
-    res.status(200).json({
-      message: "Data Inserted"
-    })
-  }
-
-  res.status(400).json({ message: "Data not found" })
 }
 
 export {

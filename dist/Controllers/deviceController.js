@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadCSVData = exports.getDeviceDetails = void 0;
 const Device_1 = require("../models/Device");
+const csvtojson_1 = __importDefault(require("csvtojson"));
 const getDeviceDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 0;
     const page = req.query.page ? parseInt(req.query.page) : 0;
@@ -33,13 +37,21 @@ const getDeviceDetails = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getDeviceDetails = getDeviceDetails;
 const uploadCSVData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = req.body;
-    const dataInserted = yield Device_1.deviceDetails.insertMany(req.body);
-    if (dataInserted) {
-        res.status(200).json({
-            message: "Data Inserted"
+    const data = [];
+    console.log(req.file.path);
+    (0, csvtojson_1.default)().fromFile(req.file.path).then(result => {
+        console.log(result.length);
+        data.push(...result);
+        Device_1.deviceDetails.insertMany(result).then(function () {
+            res.status(200).send({
+                message: "Successfully Uploaded!"
+            });
+        }).catch(function (error) {
+            res.status(500).send({
+                message: "failure",
+                error
+            });
         });
-    }
-    res.status(400).json({ message: "Data not found" });
+    });
 });
 exports.uploadCSVData = uploadCSVData;
