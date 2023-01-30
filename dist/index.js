@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const dbConfig_1 = require("./config/dbConfig");
 const deviceRoutes_1 = __importDefault(require("./Routes/deviceRoutes"));
+const UserRoutes_1 = __importDefault(require("./Routes/UserRoutes"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
@@ -21,6 +22,7 @@ app.use((0, cors_1.default)());
     console.log(err);
 });
 app.use("/device", deviceRoutes_1.default);
+app.use("/auth", UserRoutes_1.default);
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

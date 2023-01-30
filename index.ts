@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/dbConfig';
 import router from './Routes/deviceRoutes';
+import userRouter from './Routes/UserRoutes';
 import bodyParser from "body-parser"
 import cors from "cors"
 dotenv.config();
@@ -18,8 +19,8 @@ connectDB().then((result: any) => {
   console.log(err)
 });
 
-
 app.use("/device", router)
+app.use("/auth", userRouter)
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
